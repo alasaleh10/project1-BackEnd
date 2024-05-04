@@ -2,7 +2,9 @@
 include '../connection.php';
 $email=Encryption('email');
 $password=Encryption('password');
-$count=getData('users',"user_email=?",array($email,),false);
+
+
+$count=getData('users','',"user_email=?",array($email),false);
 
 if($count>0)
 {
@@ -17,9 +19,9 @@ else
         'user_password'=>$password
 
     );
- insertData('users',$data,false);
+ insertData('users','',$data,false);
  $lastInsertedId = $con->lastInsertId(); 
-getData('users',"user_id=?",array($lastInsertedId));
+getData('users','',"user_id=?",array($lastInsertedId));
 
 
 }

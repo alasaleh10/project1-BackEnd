@@ -2,10 +2,10 @@
 include '../connection.php';
 $email=Encryption('email');
 $password=Encryption('password');
-$count=getData('users',"user_email=? AND user_password=?",array($email,$password),false);
+$count=getData('users','',"user_email=? AND user_password=?",array($email,$password),false);
 if($count>0)
 {
-    getData('users',"user_email=? AND user_password=?",array($email,$password));
+    getData('users','',"user_email=? AND user_password=?",array($email,$password));
 }
 else
 {

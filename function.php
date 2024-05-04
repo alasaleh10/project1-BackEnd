@@ -14,7 +14,7 @@ function currentTime()
 
 return date('Y-m-d H:i:s');
 }
-function getAllData($table, $where = null, $values = null,$jeson=true)
+function getAllData($table,$message, $where = null, $values = null,$jeson=true)
 {
     global $con;
   
@@ -34,7 +34,10 @@ function getAllData($table, $where = null, $values = null,$jeson=true)
         if ($count > 0) {
             echo json_encode(array("status" => true, "data" => $data));
         } else {
-            echo json_encode(array("status" => false));
+            echo json_encode(array( 
+                "status" => false,
+                "message"=>$message
+            ));
         }
         return $count;
     }
@@ -48,7 +51,7 @@ function getAllData($table, $where = null, $values = null,$jeson=true)
     //   }
     } 
 }
-function getData($table, $where = null, $values = null,$jeson=true)
+function getData($table, $message,$where = null, $values = null,$jeson=true)
 {
     global $con;
   
@@ -61,7 +64,10 @@ function getData($table, $where = null, $values = null,$jeson=true)
         if ($count > 0) {
             echo json_encode(array("status" => true, "data" => $data));
         } else {
-            echo json_encode(array("status" => false));
+            echo json_encode(array( 
+                "status" => false,
+                "message"=>$message
+            ));
         }
         return $count;
 
@@ -72,7 +78,7 @@ function getData($table, $where = null, $values = null,$jeson=true)
     
 }
 
-function insertData($table, $data, $json = true)
+function insertData($table, $message,$data, $json = true)
 {
     global $con;
     foreach ($data as $field => $v)
@@ -91,14 +97,17 @@ function insertData($table, $data, $json = true)
         if ($count > 0) {
             echo json_encode(array("status" => true));
         } else {
-            echo json_encode(array("status" => false));
+            echo json_encode(array( 
+                "status" => false,
+                "message"=>$message
+            ));
         }
     }
     return $count;
 }
 
 
-function updateData($table, $data, $where, $json = true)
+function updateData($table, $message,$data, $where, $json = true)
 {
     global $con;
     $cols = array();
@@ -117,13 +126,16 @@ function updateData($table, $data, $where, $json = true)
         if ($count > 0) {
             echo json_encode(array("status" => true));
         } else {
-            echo json_encode(array("status" => false));
+            echo json_encode(array( 
+                "status" => false,
+                "message"=>$message
+            ));
         }
     }
     return $count;
 }
 
-function deleteData($table, $where, $json = true)
+function deleteData($table, $message,$where, $json = true)
 {
     global $con;
     $stmt = $con->prepare("DELETE FROM $table WHERE $where");
@@ -133,13 +145,50 @@ function deleteData($table, $where, $json = true)
         if ($count > 0) {
             echo json_encode(array("status" => true));
         } else {
-            echo json_encode(array("status" => false));
+            echo json_encode(array( 
+                "status" => false,
+                "message"=>$message
+            ));
         }
     }
     return $count;
 }
+define('MB', 1048576);
+
+function uploadfile($file, $filename,$json = true)
+{
 
 
+    $imagename =$filename  . rand(1, 50000)   . $_FILES[$file]['name'];
+    $imagetmp = $_FILES[$file]['tmp_name'];
+    $imagesize = $_FILES[$file]['size'];
+    $enablextion   = array('png', 'jpg','jpeg');
+    $exlodimage    = explode('.', $imagename);
+    $extintion      = end($exlodimage);
+    $extintion      = strtolower($extintion);
+    if (!empty($imagename) && !in_array($extintion,  $enablextion)) {
+      
+      return 0;
+    //   'يجب ان تكون صورة';;
+    }
+    if ($imagesize > 7 * MB) {
+       
+        return 1;
+        //  'حجم الصورة يجب تكون اقل من 7 ميقا';
+    }
+    if (empty($msError)) {
+        move_uploaded_file($imagetmp, 'storge/' . $imagename);
+        return $imagename;
+
+      
+        
+    } else {
+        sendFailureResponse('فشلة اضافة الصوره');
+
+    }
+
+    
+}
 
 function 
 sendFailureResponse($message)
@@ -151,4 +200,11 @@ sendFailureResponse($message)
     ));
 
 }
-
+function DeletFile($imagename){
+    if(file_exists('storge'."/".$imagename)){
+       unlink('storge'."/".$imagename);
+      
+    }
+   
+    
+    }
